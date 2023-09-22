@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique @db.VarChar(255)
+  password   String       @db.VarChar(72)
+  apiKey     String?      @db.VarChar(72)
+  color      String       @default("00bfff") @db.Char(6)
+  education  Education[]
+  experience Experience[]
+  projects   Project[]
+  heros      Hero[]
+  bio        Bio[]
+}
+
+model Education {
+  id        Int       @id @default(autoincrement())
+  title     String    @db.NVarChar(255)
+  startDate DateTime? @db.Date
+  endDate   DateTime? @db.Date
+  text      String?   @db.NVarChar(MAX)
+  User      User      @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model Experience {
+  id        Int       @id @default(autoincrement())
+  title     String    @db.NVarChar(255)
+  startDate DateTime? @db.Date
+  endDate   DateTime? @db.Date
+  text      String?   @db.NVarChar(MAX)
+  User      User      @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model Project {
+  id     Int     @id @default(autoincrement())
+  title  String  @db.NVarChar(63)
+  text   String? @db.NVarChar(MAX)
+  img    String? @db.VarChar(510)
+  link   String? @db.VarChar(510)
+  git    String? @db.VarChar(510)
+  User   User    @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Hero {
+  id      Int    @id @default(autoincrement())
+  section Int    @db.TinyInt
+  text    String @db.NVarChar(63)
+  img     String @db.VarChar(510)
+  btnText String @db.NVarChar(63)
+  User    User   @relation(fields: [userId], references: [id])
+  userId  Int
+}
+
+model Bio {
+  id     Int    @id @default(autoincrement())
+  text   String @db.NVarChar(MAX)
+  type   Int    @db.TinyInt
+  User   User   @relation(fields: [userId], references: [id])
+  userId Int
+}
